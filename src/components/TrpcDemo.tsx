@@ -11,7 +11,7 @@ export default function TrpcDemo() {
   const getAllQuery = trpc.example.getAll.useQuery();
   const counterMutation = trpc.example.counter.useMutation({
     onSuccess: (data) => {
-      setCount(data.newCount);
+      setCount(data.count);
     },
   });
 
