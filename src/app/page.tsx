@@ -1,4 +1,4 @@
-import TrpcDemo from "./components/TrpcDemo";
+import TrpcDemo from "../components/TrpcDemo";
 
 export default async function Home() {
 
