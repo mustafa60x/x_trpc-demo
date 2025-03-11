@@ -1,11 +1,25 @@
 'use client';
 
-import { useState } from 'react';
+import { trpc } from '@/utils/trpc';
+import { useEffect, useState } from 'react';
 
 export default function TrpcDemo() {
   const [name, setName] = useState('');
   const [count, setCount] = useState(0);
 
+  const helloQuery = trpc.example.hello.useQuery({ name: name || 'Guest' });
+  const getAllQuery = trpc.example.getAll.useQuery();
+  const counterMutation = trpc.example.counter.useMutation({
+    onSuccess: (data) => {
+      setCount(data.newCount);
+    },
+  });
+
+  useEffect(() => {
+    if (helloQuery.data) {
+      console.log(helloQuery.data);
+    }
+  }, [helloQuery.data]);
 
   return (
     <div className="space-y-8 p-8 max-w-md mx-auto bg-white rounded-xl shadow-md">
@@ -22,7 +36,7 @@ export default function TrpcDemo() {
             placeholder="İsminizi girin"
             className="border p-2 rounded"
           />
-          <p className="text-lg">{}</p>
+          <p className="text-lg">{helloQuery.data}</p>
         </div>
 
         {/* Counter Mutation Demo */}
@@ -30,7 +44,7 @@ export default function TrpcDemo() {
           <h3 className="text-xl">Counter Mutation</h3>
           <p className="text-lg">Count: {count}</p>
           <button
-            onClick={() => setCount(count + 1)}
+            onClick={() => counterMutation.mutate({ count })}
             className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
           >
             Artır
@@ -41,7 +55,9 @@ export default function TrpcDemo() {
         <div className="space-y-2">
           <h3 className="text-xl">Users List</h3>
           <ul className="list-disc pl-5">
-            <li key={1}>Mustafa</li>
+            {getAllQuery.data?.map((user) => (
+              <li key={user.id}>{user.name}</li>
+            ))}
           </ul>
         </div>
       </div>
